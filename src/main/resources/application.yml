@@ -1,0 +1,56 @@
+app:
+  name: request-processor
+  outbox:
+    batch-size: 50
+    delay-ms: 1000
+
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/processor_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 30000
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all
+      retries: 1
+    admin:
+      properties:
+        bootstrap.servers: localhost:9092
+    topics:  # Добавьте эту секцию
+      - name: sms-events
+        partitions: 1
+        replication-factor: 1
+      - name: email-events
+        partitions: 1
+        replication-factor: 1
+      - name: push-events
+        partitions: 1
+        replication-factor: 1
+      - name: telegram-events
+        partitions: 1
+        replication-factor: 1
+
+logging:
+  level:
+    com.borscheva.spring.rest.notificationrequestprocessor: DEBUG
+    org.springframework.kafka: INFO
