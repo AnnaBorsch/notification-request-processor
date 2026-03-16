@@ -1,13 +1,7 @@
-app:
-  name: request-processor
-  outbox:
-    batch-size: 50
-    delay-ms: 1000
-
-server:
-  port: 8080
-
 spring:
+  application:
+    name: notification-request-processor
+
   datasource:
     url: jdbc:postgresql://localhost:5432/processor_db
     username: postgres
@@ -36,7 +30,7 @@ spring:
     admin:
       properties:
         bootstrap.servers: localhost:9092
-    topics:  # Добавьте эту секцию
+    topics:
       - name: sms-events
         partitions: 1
         replication-factor: 1
@@ -49,6 +43,15 @@ spring:
       - name: telegram-events
         partitions: 1
         replication-factor: 1
+
+app:
+  name: request-processor
+  outbox:
+    batch-size: 50
+    delay-ms: 1000
+
+server:
+  port: 8080
 
 logging:
   level:
